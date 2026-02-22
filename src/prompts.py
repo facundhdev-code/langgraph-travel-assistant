@@ -1,0 +1,1 @@
+"""Travel Assistant - Prompt templates."""
