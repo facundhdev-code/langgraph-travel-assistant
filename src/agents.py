@@ -3,13 +3,11 @@ from typing import List
 from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
 from langchain_community.tools.tavily_search import TavilySearchResults
-from langgraph.prebuilt import create_agent
+from langgraph.prebuilt import ToolNode
 
 from .prompts import (
     PLANNER_PROMPT,
     EXECUTOR_PROMPT,
-    WEB_RESEARCHER_SYSTEM,
-    ACTIVITIES_RESEARCHER_SYSTEM,
     SYNTHESIZER_PROMPT
 )
   
@@ -31,6 +29,11 @@ class ExecutorDecision(BaseModel):
     needs_replan: bool = Field(description='Whether to trigger a replan')
     replan_reason: str = Field(description='Reason for replanning if needed')
     
+# --- TOOLS ---
+
+search_tools = [TavilySearchResults(max_results=3)]
+tool_node = ToolNode(search_tools)
+    
 # --- LLM ---
 
 def get_llm(temperature: float = 0) -> ChatOpenAI:
@@ -45,15 +48,13 @@ def create_executor_agent():
     llm = get_llm()
     return EXECUTOR_PROMPT | llm.with_structured_output(ExecutorDecision)
 
-def create_web_researcher_agent():
+def create_web_researcher_llm():
     llm = get_llm()
-    tools = [TavilySearchResults(max_results=3)]
-    return create_agent(llm, tools, prompt=WEB_RESEARCHER_SYSTEM)
+    return llm.bind_tools(search_tools)
 
-def create_activities_researcher_agent():
+def create_activities_researcher_llm():
     llm = get_llm()
-    tools = [TavilySearchResults(max_results=3)]
-    return create_agent(llm, tools, prompt=ACTIVITIES_RESEARCHER_SYSTEM)
+    return llm.bind_tools(search_tools)
 
 def create_synthesizer_agent():
     llm = get_llm(temperature=0.3)
