@@ -13,3 +13,5 @@ class State(TypedDict):
     replan_flag: bool
     replan_attempts: Dict[int, int]
     final_answer: str
+    travel_date: str
+    trip_duration: str

@@ -2,7 +2,7 @@
 from typing import List
 from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
-from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_tavily import TavilySearch
 from langgraph.prebuilt import ToolNode
 
 from .prompts import (
@@ -31,7 +31,7 @@ class ExecutorDecision(BaseModel):
     
 # --- TOOLS ---
 
-search_tools = [TavilySearchResults(max_results=3)]
+search_tools = [TavilySearch(max_results=3)]
 tool_node = ToolNode(search_tools)
     
 # --- LLM ---

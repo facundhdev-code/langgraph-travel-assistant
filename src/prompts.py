@@ -33,7 +33,7 @@ PLANNER_SYSTEM = """You are an expert travel planning assistant. Your job is to 
   
 PLANNER_PROMPT = ChatPromptTemplate.from_messages([
       ("system", PLANNER_SYSTEM),
-      ("human", "{user_query}")
+      ("human", "{user_query}\nTravel date: {travel_date}\nTrip duration: {trip_duration}")
 ])
 
 # --- EXECUTOR --- 
@@ -73,6 +73,8 @@ WEB_RESEARCHER_SYSTEM = """You are an expert travel logistics researcher. You sp
   Use your search tools to find accurate, current information.
   Always mention when information might be outdated.
   Be concise and focus on practical, actionable information for the traveler.
+  Always include the source URLs for any flights, hotels, or booking platforms you find.
+  Format links as: [Site Name](URL)
   """
 WEB_RESEARCHER_PROMPT = ChatPromptTemplate.from_messages([
       ("system", WEB_RESEARCHER_SYSTEM),
@@ -89,6 +91,8 @@ ACTIVITIES_RESEARCHER_SYSTEM = """You are an expert travel activities and cultur
 
   Use your search tools to find engaging, diverse activity recommendations.
   Be enthusiastic and descriptive, helping the traveler visualize their experience.
+  Always include the source URLs for attractions, restaurants, and activity booking sites you find.
+  Format links as: [Site Name](URL)
   """
   
 ACTIVITIES_RESEARCHER_PROMPT = ChatPromptTemplate.from_messages([
@@ -106,12 +110,14 @@ SYNTHESIZER_SYSTEM = """You are an expert travel writer and itinerary planner. S
   4. **Day-by-Day Itinerary** - Activities, restaurants, and tips
   5. **Budget Estimate** - Rough cost breakdown
   6. **Essential Tips** - Local customs, safety, must-know info
+  7. **Useful Links** - Direct links to book flights, hotels, and attractions from the research
 
   Format in clear markdown. Be specific with names and practical details.
   Make it feel personal and exciting, not like a generic travel guide.
+  Preserve all URLs found in the research. Format links as markdown: [Name](URL)
 """
 SYNTHESIZER_PROMPT = ChatPromptTemplate.from_messages([
       ("system", SYNTHESIZER_SYSTEM),
       MessagesPlaceholder(variable_name="messages"),
-      ("human", "Create a complete travel itinerary for: {user_query}\n\nBased on this research:\n{research_summary}")
+      ("human", "Create a complete travel itinerary for: {user_query}\nTravel date: {travel_date}\nTrip duration:{trip_duration}\n\nBased on this research:\n{research_summary}")
   ])

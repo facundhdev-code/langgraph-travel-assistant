@@ -18,7 +18,9 @@ MAX_REPLAN_ATTEMPTS = 2
 # --- NODES --- 
 def planner_node(state:State) -> dict:
     planner = create_planner_agent()
-    plan = planner.invoke({'user_query': state['user_query']})
+    travel_date = state.get('travel_date', '') or 'not specified'
+    trip_duration = state.get('trip_duration', '') or 'not specified'
+    plan = planner.invoke({'user_query': state['user_query'], 'travel_date': travel_date, 'trip_duration':trip_duration })
     
     return {
         'plan': plan.model_dump(),
@@ -84,7 +86,8 @@ def advance_step_node(state:State) -> dict:
 
 def synthesizer_node(state: State) -> dict:
     synthesizer = create_synthesizer_agent()
-    
+    travel_date = state.get('travel_date', '') or 'not specified'
+    trip_duration = state.get('trip_duration', '') or 'not specified'
     research_summary = "\n\n".join(
         f'Research {i + 1}: \n{msg.content}'
         for i, msg in enumerate(state['messages'])
@@ -94,6 +97,8 @@ def synthesizer_node(state: State) -> dict:
     result = synthesizer.invoke({
         'messages': state['messages'],
         'user_query':state['user_query'],
+        'travel_date': travel_date,
+        'trip_duration': trip_duration,
         'research_summary': research_summary
     })
     
