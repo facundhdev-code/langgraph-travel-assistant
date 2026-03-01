@@ -34,7 +34,8 @@ def build_graph(checkpointer=None):
     
     # -- EDGES --
     builder.add_edge(START, 'planner')
-    builder.add_edge('planner', 'executor')
+    builder.add_edge('planner', 'rag_retriever')
+    builder.add_edge('rag_retriever', 'executor')
     
     builder.add_conditional_edges(
         'executor',

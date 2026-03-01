@@ -33,7 +33,7 @@ PLANNER_SYSTEM = """You are an expert travel planning assistant. Your job is to 
   
 PLANNER_PROMPT = ChatPromptTemplate.from_messages([
       ("system", PLANNER_SYSTEM),
-      ("human", "{user_query}\nTravel date: {travel_date}\nTrip duration: {trip_duration}")
+      ("human", "{user_query}\nTravel date: {travel_date}\nTrip duration: {trip_duration}\nOrigin city: {origin_city}")
 ])
 
 # --- EXECUTOR --- 
@@ -119,5 +119,5 @@ SYNTHESIZER_SYSTEM = """You are an expert travel writer and itinerary planner. S
 SYNTHESIZER_PROMPT = ChatPromptTemplate.from_messages([
       ("system", SYNTHESIZER_SYSTEM),
       MessagesPlaceholder(variable_name="messages"),
-      ("human", "Create a complete travel itinerary for: {user_query}\nTravel date: {travel_date}\nTrip duration:{trip_duration}\n\nBased on this research:\n{research_summary}")
+      ("human", "Create a complete travel itinerary for: {user_query}\nOrigin city: {origin_city}\nTravel date: {travel_date}\nTrip duration:{trip_duration}\n\nBased on this research:\n{research_summary}")
   ])

@@ -21,7 +21,7 @@ def planner_node(state:State) -> dict:
     planner = create_planner_agent()
     travel_date = state.get('travel_date', '') or 'not specified'
     trip_duration = state.get('trip_duration', '') or 'not specified'
-    plan = planner.invoke({'user_query': state['user_query'], 'travel_date': travel_date, 'trip_duration':trip_duration })
+    plan = planner.invoke({'user_query': state['user_query'], 'travel_date': travel_date, 'trip_duration':trip_duration, 'origin_city': state.get('origin_city', '') })
     
     return {
         'plan': plan.model_dump(),
@@ -86,7 +86,7 @@ def activities_researcher_node(state:State) -> dict:
 def advance_step_node(state:State) -> dict:
     return {'current_step': state['current_step'] + 1}
 
-def rag_retriever_node(state:State) -> Dict:
+def rag_retriever_node(state:State) -> dict:
     context = retrieve_context(state['user_query'])
     return {'rag_context': context}
 
@@ -103,12 +103,14 @@ def synthesizer_node(state: State) -> dict:
     result = synthesizer.invoke({
         'messages': state['messages'],
         'user_query':state['user_query'],
+        'origin_city': state.get('origin_city', ''),
         'travel_date': travel_date,
         'trip_duration': trip_duration,
         'research_summary': research_summary
     })
     
     return {'final_answer': result.content}
+
 
 # --- ROUTING FUNCTIONS ---
 

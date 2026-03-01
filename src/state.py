@@ -16,3 +16,4 @@ class State(TypedDict):
     travel_date: str
     trip_duration: str
     rag_context:str
+    origin_city:str
