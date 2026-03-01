@@ -14,7 +14,8 @@ from .nodes import (
     route_after_executor,
     should_use_tools,
     route_after_tool,
-    route_after_step
+    route_after_step,
+    rag_retriever_node
 )
 
 
@@ -29,6 +30,7 @@ def build_graph(checkpointer=None):
     builder.add_node("tool_node", tool_node)
     builder.add_node("advance_step", advance_step_node)
     builder.add_node("synthesizer", synthesizer_node)
+    builder.add_node("rag_retriever", rag_retriever_node)
     
     # -- EDGES --
     builder.add_edge(START, 'planner')

@@ -15,3 +15,4 @@ class State(TypedDict):
     final_answer: str
     travel_date: str
     trip_duration: str
+    rag_context:str

@@ -1,6 +1,7 @@
 """Travel Assistant - Graph nodes."""
 from typing import Literal
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+from .rag import retrieve_context
 
 from .state import State
 from .agents import (
@@ -62,11 +63,10 @@ def executor_node(state: State) -> dict:
 def web_researcher_node(state:State) -> dict:
     llm = create_web_researcher_llm()
     messages = [
-        SystemMessage(content=WEB_RESEARCHER_SYSTEM),
-        *state['messages'],
-        HumanMessage(content=state['agent_query'])
-    ]
-    
+        SystemMessage(content=WEB_RESEARCHER_SYSTEM)]
+    if state.get('rag_context'):
+        messages.append(SystemMessage(content=f"Curated destination info:\n{state['rag_context']}"))
+    messages +=  [*state['messages'], HumanMessage(content=state['agent_query'])]  
     response = llm.invoke(messages)
     
     return {'messages': [response]}
@@ -74,15 +74,21 @@ def web_researcher_node(state:State) -> dict:
 def activities_researcher_node(state:State) -> dict: 
     llm = create_activities_researcher_llm()
     messages = [
-        SystemMessage(content=ACTIVITIES_RESEARCHER_SYSTEM),
-        *state['messages'],
-        HumanMessage(content=state['agent_query'])
-    ]
+        SystemMessage(content=ACTIVITIES_RESEARCHER_SYSTEM)]
+    if state.get('rag_context'):
+         messages.append(SystemMessage(content=f"Curated destination info:\n{state['rag_context']}"))
+         
+    messages += [*state['messages'], HumanMessage(content=state['agent_query'])]
     response = llm.invoke(messages)
+    
     return {'messages': [response]}
 
 def advance_step_node(state:State) -> dict:
     return {'current_step': state['current_step'] + 1}
+
+def rag_retriever_node(state:State) -> Dict:
+    context = retrieve_context(state['user_query'])
+    return {'rag_context': context}
 
 def synthesizer_node(state: State) -> dict:
     synthesizer = create_synthesizer_agent()
