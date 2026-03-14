@@ -24,3 +24,7 @@ Thumbs.db
 # Logs
 *.log
 .claude
+data/chroma_db/
+
+# Transcripciones privadas
+docs/transcripts/
